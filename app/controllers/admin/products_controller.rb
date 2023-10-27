@@ -1,4 +1,6 @@
 class Admin::ProductsController < ApplicationController
+  http_basic_authenticate_with name: "jungle", password: "book",
+                               except: :redirect_unauthenticated
 
   def index
     @products = Product.order(id: :desc).all
@@ -19,9 +21,13 @@ class Admin::ProductsController < ApplicationController
   end
 
   def destroy
-    @product = Product.find params[:id]
+    @product = Product.find(params[:id])
     @product.destroy
     redirect_to [:admin, :products], notice: 'Product deleted!'
+  end
+
+  def redirect_unauthenticated
+    redirect_to root_path, alert: 'Authentication failed. You are not authorized to access this page.'
   end
 
   private
@@ -36,5 +42,4 @@ class Admin::ProductsController < ApplicationController
       :price
     )
   end
-
 end
